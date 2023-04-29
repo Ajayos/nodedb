@@ -43,17 +43,17 @@ export const setDB = async (tableName: string, rowName: string, data: any): Prom
         if (result.length === 0) {
             // Table does not exist, create it and insert the data
             await runAsync(`CREATE TABLE ${tableName} (row_name TEXT PRIMARY KEY, data TEXT NOT NULL);`);
-            await runAsync(`INSERT OR IGNORE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
+            await runAsync(`INSERT INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
         } else {
             // Table exists, check if row exists
             const result = await allAsync(`SELECT row_name FROM ${tableName} WHERE row_name='${rowName}';`);
 
             if (result.length === 0) {
                 // Row does not exist, insert it
-                await runAsync(`INSERT INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
+                await runAsync(`INSERT OR REPLACE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
             } else {
                 // Row exists, update it
-                await runAsync(`INSERT OR REPLACE OR IGNORE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
+                await runAsync(`UPDATE ${tableName} SET data = ? WHERE row_name = ?`, [JSON.stringify(data), rowName]);
             }
         }
         return true;
@@ -139,17 +139,17 @@ export const setDATA = async (tableName: string, rowName: string, data: any): Pr
         if (result.length === 0) {
             // Table does not exist, create it and insert the data
             await runAsync(`CREATE TABLE ${tableName} (row_name TEXT PRIMARY KEY, data TEXT NOT NULL);`);
-            await runAsync(`INSERT OR IGNORE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, data]);
+            await runAsync(`INSERT INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, data]);
         } else {
             // Table exists, check if row exists
             const result = await allAsync(`SELECT row_name FROM ${tableName} WHERE row_name='${rowName}';`);
 
             if (result.length === 0) {
                 // Row does not exist, insert it
-                await runAsync(`INSERT INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, data]);
+                await runAsync(`INSERT OR REPLACE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, data]);
             } else {
                 // Row exists, update it
-                await runAsync(`INSERT OR REPLACE OR IGNORE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, data]);
+                await runAsync(`UPDATE ${tableName} SET data = ? WHERE row_name = ?`, [data, rowName]);
             }
         }
         return true;
