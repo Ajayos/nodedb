@@ -43,7 +43,7 @@ export const setDB = async (tableName: string, rowName: string, data: any): Prom
         if (result.length === 0) {
             // Table does not exist, create it and insert the data
             await runAsync(`CREATE TABLE ${tableName} (row_name TEXT PRIMARY KEY, data TEXT NOT NULL);`);
-            await runAsync(`INSERT INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
+            await runAsync(`INSERT OR IGNORE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
         } else {
             // Table exists, check if row exists
             const result = await allAsync(`SELECT row_name FROM ${tableName} WHERE row_name='${rowName}';`);
@@ -53,7 +53,7 @@ export const setDB = async (tableName: string, rowName: string, data: any): Prom
                 await runAsync(`INSERT INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
             } else {
                 // Row exists, update it
-                await runAsync(`INSERT OR REPLACE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
+                await runAsync(`INSERT OR REPLACE OR IGNORE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, JSON.stringify(data)]);
             }
         }
         return true;
@@ -106,6 +106,102 @@ export const getDB = async (tableName: string, rowName?: string): Promise<any> =
 
 // Create the 'deleteDB' function
 export const deleteDB = async (tableName: string, rowName?: string): Promise<boolean> => {
+    try {
+        if (rowName) {
+            // Row name is specified, check if it exists
+            const result = await allAsync(`SELECT row_name FROM ${tableName} WHERE row_name='${rowName}';`);
+
+            if (result.length === 0) {
+                // Row does not exist, return false
+                return false;
+            } else {
+                // Row exists, delete it
+                await runAsync(`DELETE FROM ${tableName} WHERE row_name='${rowName}';`);
+                return true;
+            }
+        } else {
+            // Row name is not specified, delete the table
+            await runAsync(`DROP TABLE ${tableName};`);
+            return true;
+        }
+    } catch (err) {
+        console.error(err.message);
+        return false;
+    }
+}
+
+// Create the 'setDB' function
+export const setDATA = async (tableName: string, rowName: string, data: any): Promise<any> => {
+    try {
+        // Check if the table exists
+        const result = await allAsync(`SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}';`);
+
+        if (result.length === 0) {
+            // Table does not exist, create it and insert the data
+            await runAsync(`CREATE TABLE ${tableName} (row_name TEXT PRIMARY KEY, data TEXT NOT NULL);`);
+            await runAsync(`INSERT OR IGNORE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, data]);
+        } else {
+            // Table exists, check if row exists
+            const result = await allAsync(`SELECT row_name FROM ${tableName} WHERE row_name='${rowName}';`);
+
+            if (result.length === 0) {
+                // Row does not exist, insert it
+                await runAsync(`INSERT INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, data]);
+            } else {
+                // Row exists, update it
+                await runAsync(`INSERT OR REPLACE OR IGNORE INTO ${tableName} (row_name, data) VALUES (?, ?);`, [rowName, data]);
+            }
+        }
+        return true;
+    } catch (err) {
+        console.error(err.message);
+        return false;
+    }
+};
+
+// Create the 'getDB' function
+export const getDATA = async (tableName: string, rowName?: string): Promise<any> => {
+  try {
+        // Check if the table exists
+        const result = await allAsync(`SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}';`);
+
+        if (result.length === 0) {
+            // Table does not exist, create it
+            await runAsync(`CREATE TABLE ${tableName} (row_name TEXT PRIMARY KEY, data TEXT NOT NULL);`);
+            return undefined;
+        } else {
+            if (rowName) {
+                // Row name is specified, check if it exists
+                const result = await allAsync(`SELECT data FROM ${tableName} WHERE row_name='${rowName}';`);
+
+                if (result.length === 0) {
+                    // Row does not exist, return undefined
+                    return undefined;
+                } else {
+                    // Row exists, return the data
+                    return result[0].data;
+                }
+            } else {
+                // Row name is not specified, return all rows
+                const result = await allAsync(`SELECT row_name, data FROM ${tableName};`);
+                return result.map((row: any) => {
+                    return {
+                        rowName: row.row_name,
+                        data: row.data
+                    };
+                });
+            }
+        }
+
+    } catch (err) {
+        console.error(err.message);
+        return undefined;
+    }
+};
+
+
+// Create the 'deleteDB' function
+export const deleteDATA = async (tableName: string, rowName?: string): Promise<boolean> => {
     try {
         if (rowName) {
             // Row name is specified, check if it exists
