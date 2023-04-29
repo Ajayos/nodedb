@@ -41,6 +41,7 @@ var fs = require("fs");
 var path = require("path");
 var sqlite3 = require("sqlite3");
 var util_1 = require("util");
+var nodelog = require("@ajayos/nodelog");
 var DB_FOLDER = 'DB';
 var DB_FILE = 'ajayos.sql';
 var DB_PATH = './' + DB_FOLDER + '/' + DB_FILE;
@@ -87,7 +88,7 @@ var setDB = function (tableName, rowName, data) { return __awaiter(void 0, void 
             case 2:
                 // Table does not exist, create it and insert the data
                 _a.sent();
-                return [4 /*yield*/, runAsync("INSERT OR IGNORE INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, JSON.stringify(data)])];
+                return [4 /*yield*/, runAsync("INSERT INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, JSON.stringify(data)])];
             case 3:
                 _a.sent();
                 return [3 /*break*/, 9];
@@ -96,14 +97,14 @@ var setDB = function (tableName, rowName, data) { return __awaiter(void 0, void 
                 result_1 = _a.sent();
                 if (!(result_1.length === 0)) return [3 /*break*/, 7];
                 // Row does not exist, insert it
-                return [4 /*yield*/, runAsync("INSERT INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, JSON.stringify(data)])];
+                return [4 /*yield*/, runAsync("INSERT OR REPLACE INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, JSON.stringify(data)])];
             case 6:
                 // Row does not exist, insert it
                 _a.sent();
                 return [3 /*break*/, 9];
             case 7: 
             // Row exists, update it
-            return [4 /*yield*/, runAsync("INSERT OR REPLACE OR IGNORE INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, JSON.stringify(data)])];
+            return [4 /*yield*/, runAsync("UPDATE ".concat(tableName, " SET data = ? WHERE row_name = ?"), [JSON.stringify(data), rowName])];
             case 8:
                 // Row exists, update it
                 _a.sent();
@@ -223,7 +224,7 @@ var setDATA = function (tableName, rowName, data) { return __awaiter(void 0, voi
             case 2:
                 // Table does not exist, create it and insert the data
                 _a.sent();
-                return [4 /*yield*/, runAsync("INSERT OR IGNORE INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, data])];
+                return [4 /*yield*/, runAsync("INSERT INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, data])];
             case 3:
                 _a.sent();
                 return [3 /*break*/, 9];
@@ -232,14 +233,14 @@ var setDATA = function (tableName, rowName, data) { return __awaiter(void 0, voi
                 result_4 = _a.sent();
                 if (!(result_4.length === 0)) return [3 /*break*/, 7];
                 // Row does not exist, insert it
-                return [4 /*yield*/, runAsync("INSERT INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, data])];
+                return [4 /*yield*/, runAsync("INSERT OR REPLACE INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, data])];
             case 6:
                 // Row does not exist, insert it
                 _a.sent();
                 return [3 /*break*/, 9];
             case 7: 
             // Row exists, update it
-            return [4 /*yield*/, runAsync("INSERT OR REPLACE OR IGNORE INTO ".concat(tableName, " (row_name, data) VALUES (?, ?);"), [rowName, data])];
+            return [4 /*yield*/, runAsync("UPDATE ".concat(tableName, " SET data = ? WHERE row_name = ?"), [data, rowName])];
             case 8:
                 // Row exists, update it
                 _a.sent();
