@@ -36,12 +36,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteDB = exports.getDB = exports.setDB = void 0;
+exports.deleteDB = exports.getDB = exports.setDB = exports.db = exports.allAsync = exports.runAsync = void 0;
 var fs = require("fs");
 var path = require("path");
 var sqlite3 = require("sqlite3");
 var util_1 = require("util");
-var nodelog = require('@ajayos/nodelog');
+var nodelog = require("@ajayos/nodelog");
 var DB_FOLDER = 'DB';
 var DB_FILE = 'ajayos.sql';
 var DB_PATH = './' + DB_FOLDER + '/' + DB_FILE;
@@ -61,14 +61,17 @@ var db = new sqlite3.Database(DB_PATH, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CRE
                 log(err.message, 'error');
             }
             else {
-                log("Connected to the '".concat(DB_FILE, "' database."), 'info');
+                log("Connected to the database.", 'info');
             }
         });
     }
 });
+exports.db = db;
 // Promisify the db.run() and db.all() methods for easier use with async/await
 var runAsync = (0, util_1.promisify)(db.run.bind(db));
+exports.runAsync = runAsync;
 var allAsync = (0, util_1.promisify)(db.all.bind(db));
+exports.allAsync = allAsync;
 // Create the 'setDB' function
 var setDB = function (tableName, rowName, data) { return __awaiter(void 0, void 0, void 0, function () {
     var result, result_1, err_1;

@@ -1,6 +1,6 @@
 {
   "name": "@ajayos/nodedb",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Database for nodejs",
   "main": "index.js",
   "ts": "index.ts",

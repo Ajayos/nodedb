@@ -19,7 +19,7 @@ import { setDB, getDB, deleteDB } from '@ajayos/nodedb';
 ```
 Then you can use the following functions:
 
-`setDB(tableName: string, rowName: string, data: any): Promise<boolean>`
+`setDB(tableName: string, rowName: string, data: any): Promise<any>`
 
 Inserts or updates a row in the specified table with the specified key and data.
 

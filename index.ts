@@ -24,7 +24,7 @@ const db = new sqlite3.Database(DB_PATH, sqlite3.OPEN_READWRITE | sqlite3.OPEN_C
       if (err) {
         log(err.message, 'error');
       } else {
-       log(`Connected to the '${DB_FILE}' database.`, 'info');
+       log(`Connected to the database.`, 'info');
       }
     });
   }
@@ -33,9 +33,9 @@ const db = new sqlite3.Database(DB_PATH, sqlite3.OPEN_READWRITE | sqlite3.OPEN_C
 // Promisify the db.run() and db.all() methods for easier use with async/await
 const runAsync = promisify(db.run.bind(db));
 const allAsync = promisify(db.all.bind(db));
-
+export { runAsync, allAsync, db };
 // Create the 'setDB' function
-export const setDB = async (tableName: string, rowName: string, data: any): Promise<boolean> => {
+export const setDB = async (tableName: string, rowName: string, data: any): Promise<any> => {
     try {
         // Check if the table exists
         const result = await allAsync(`SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}';`);
