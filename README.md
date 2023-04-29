@@ -48,7 +48,7 @@ async function DB() {
 
     await deleteDB('users', 'ajay');
 
-    const deleted = await getDB('users', 'keerthana');
+    const deleted = await getDB('users', 'ajay');
     console.log(deleted); // undefined
 }
 DB();
