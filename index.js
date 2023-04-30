@@ -41,7 +41,8 @@ var fs = require("fs");
 var path = require("path");
 var sqlite3 = require("sqlite3");
 var util_1 = require("util");
-var nodelog = require("@ajayos/nodelog");
+// tslint:disable-next-line
+var nodelogger_1 = require("@ajayos/nodelogger");
 var DB_FOLDER = 'DB';
 var DB_FILE = 'ajayos.sql';
 var DB_PATH = './' + DB_FOLDER + '/' + DB_FILE;
@@ -58,10 +59,10 @@ var db = new sqlite3.Database(DB_PATH, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CRE
         // Set the password for the database
         db.run("PRAGMA key='eff7f92d38fafc792db6f88550399b56c521df95f841a265d93383d6b08395bc';", function (err) {
             if (err) {
-                log(err.message, 'error');
+                (0, nodelogger_1.log)(err.message, 'error');
             }
             else {
-                log("Connected to the database.", 'info');
+                (0, nodelogger_1.log)("Connected to the database.", 'info');
             }
         });
     }
