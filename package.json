@@ -1,6 +1,6 @@
 {
   "name": "@ajayos/nodedb",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "Database for nodejs",
   "main": "index.js",
   "ts": "index.ts",
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/Ajayos/nodedb#readme",
   "dependencies": {
-    "@ajayos/nodelog": "^1.0.2",
+    "@ajayos/nodelogger": "^1.0.3",
     "crypto": "^1.0.1",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",

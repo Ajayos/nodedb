@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as sqlite3 from 'sqlite3';
 import { promisify } from 'util';
 // tslint:disable-next-line
-import * as nodelog from '@ajayos/nodelog';
+import { log } from '@ajayos/nodelogger';
 
 const DB_FOLDER = 'DB';
 const DB_FILE = 'ajayos.sql';
