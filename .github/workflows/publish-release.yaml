@@ -10,12 +10,9 @@ permissions: write-all
 jobs:
   publish-release:
     runs-on: ubuntu-latest
-    env:
-      yarn_cache_folder: ${{ env.HOME }}/.cache/yarn/v6
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -34,6 +31,8 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+        env:
+          yarn_cache_folder: ${{ env.HOME }}/.cache/yarn/v6
 
       - name: Install Dependencies
         run: yarn
@@ -45,17 +44,18 @@ jobs:
 
           if [ "$tag_version" == "$package_version" ]; then
             echo "Tag version and package.json version match. Proceeding with publishing."
+            exit 0
           else
             echo "Tag version and package.json version do not match. Skipping publishing."
             exit 1
           fi
 
       - name: Make Package
-        if: success()
+        if: ${{ success() }}
         run: npm pack
 
       - name: Rename and Copy Package
-        if: success()
+        if: ${{ success() }}
         run: |
           package_version=$(node -pe "require('./package.json').version")
           mv *.tgz "${{ github.ref_name }}-${package_version}.tgz"

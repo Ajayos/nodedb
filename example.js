@@ -1,7 +1,7 @@
 const DB = require("./");
 
 // Define a custom database file path
-const customDBPath = "mydatabase.sql";
+const customDBPath = "db/mydatabase.sql";
 
 // Create an instance of the DB class
 const nodedb = new DB(customDBPath);
