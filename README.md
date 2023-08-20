@@ -126,7 +126,6 @@ Example
 Here's a complete example of how to use NodeDB to interact with a database:
 
 ```javascript
-Copy code
 const DB = require('@ajayos/nodedb');
 
 // Define a custom database file path
@@ -151,6 +150,7 @@ async function main() {
 main().catch((error) => {
   console.error('An error occurred:', error);
 });
+```
 
 ## Note
 

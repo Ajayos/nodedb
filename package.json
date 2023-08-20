@@ -1,6 +1,6 @@
 {
     "name": "@ajayos/nodedb",
-    "version": "1.0.9",
+    "version": "1.1.0",
     "description": "NodeDB is a simple key-value store for Node.js, built on top of SQLite.",
     "main": "index.js",
     "scripts": {
