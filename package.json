@@ -1,36 +1,34 @@
 {
-  "name": "@ajayos/nodedb",
-  "version": "1.0.7",
-  "description": "Database for nodejs",
-  "main": "index.js",
-  "ts": "index.ts",
-  "scripts": {
-    "test": "tsc index.ts && node index.js",
-    "start": "node index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Ajayos/nodedb.git"
-  },
-  "keywords": [
-    "db",
-    "database",
-    "sql",
-    "Ajayos",
-    "ajay"
-  ],
-  "author": "Ajay o s",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/Ajayos/nodedb/issues"
-  },
-  "homepage": "https://github.com/Ajayos/nodedb#readme",
-  "dependencies": {
-    "@ajayos/nodelogger": "^1.0.3",
-    "crypto": "^1.0.1",
-    "fs": "^0.0.1-security",
-    "path": "^0.12.7",
-    "sqlite3": "^5.1.6",
-    "util": "^0.12.5"
-  }
+    "name": "@ajayos/nodedb",
+    "version": "1.0.8",
+    "description": "NodeDB is a simple key-value store for Node.js, built on top of SQLite.",
+    "main": "index.js",
+    "scripts": {
+        "start": "node example.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Ajayos/nodedb.git"
+    },
+    "keywords": [
+        "db",
+        "database",
+        "sql",
+        "Ajayos",
+        "ajay"
+    ],
+    "author": "Ajay o s",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/Ajayos/nodedb/issues"
+    },
+    "homepage": "https://github.com/Ajayos/nodedb#readme",
+    "dependencies": {
+        "colors": "^1.4.0",
+        "crypto": "^1.0.1",
+        "fs": "^0.0.1-security",
+        "path": "^0.12.7",
+        "sqlite3": "^5.1.6",
+        "util": "^0.12.5"
+    }
 }

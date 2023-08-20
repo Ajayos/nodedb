@@ -1,0 +1,57 @@
+name: Publish NPM
+
+on:
+  release:
+    types:
+      - created
+
+permissions: write-all
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.4.0
+        with:
+          node-version: 18.x
+          registry-url: "https://registry.npmjs.org"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.yarn_cache_folder }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+        env:
+          yarn_cache_folder: ${{ env.HOME }}/.cache/yarn/v6
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Check if tag and package.json version match
+        run: |
+          tag_version=$(basename "${{ github.ref }}" | sed 's/v//')
+          package_version=$(node -pe "require('./package.json').version")
+
+          if [ "$tag_version" == "$package_version" ]; then
+            echo "Tag version and package.json version match. Proceeding with publishing."
+            exit 0
+          else
+            echo "Tag version and package.json version do not match. Skipping publishing."
+            exit 1
+          fi
+
+      - name: Publish in NPM
+        if: ${{ success() }}
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

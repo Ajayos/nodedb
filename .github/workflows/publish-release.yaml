@@ -1,0 +1,68 @@
+name: Publish Release
+
+on:
+  release:
+    types:
+      - created
+
+permissions: write-all
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    env:
+      yarn_cache_folder: ${{ env.HOME }}/.cache/yarn/v6
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v2.4.0
+        with:
+          node-version: 18.x
+          registry-url: "https://registry.npmjs.org"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.yarn_cache_folder }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Check if tag and package.json version match
+        run: |
+          tag_version=$(basename "${{ github.ref }}" | sed 's/v//')
+          package_version=$(node -pe "require('./package.json').version")
+
+          if [ "$tag_version" == "$package_version" ]; then
+            echo "Tag version and package.json version match. Proceeding with publishing."
+          else
+            echo "Tag version and package.json version do not match. Skipping publishing."
+            exit 1
+          fi
+
+      - name: Make Package
+        if: success()
+        run: npm pack
+
+      - name: Rename and Copy Package
+        if: success()
+        run: |
+          package_version=$(node -pe "require('./package.json').version")
+          mv *.tgz "${{ github.ref_name }}-${package_version}.tgz"
+
+      - name: Edit Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ github.ref_name }}-${package_version}.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
